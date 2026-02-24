@@ -63,7 +63,6 @@ function injectBadgeIfCustomerPage() {
   console.log('[ClientID] Customer page detected, ID from URL:', customerId);
   if (!customerId) return;
 
-  // Poll for a stable container to inject into
   let attempts = 0;
   const maxAttempts = 30;
 
@@ -75,22 +74,25 @@ function injectBadgeIfCustomerPage() {
       return;
     }
 
-    // Try various anchors — QB customer page loads content dynamically
-    const anchor =
-      document.querySelector('.notesContainer') ||
-      document.querySelector('[class*="notes"]') ||
-      document.querySelector('[class*="Notes"]') ||
-      document.querySelector('[class*="custom-field"], [class*="customField"], [class*="CustomField"]') ||
-      document.querySelector('div[class*="entity"]') ||
-      document.querySelector('div[class*="wrapper"]') ||
-      document.querySelector('div[class*="content"]') ||
-      document.querySelector('div[class*="main"]') ||
-      document.querySelector('div[class]');
+    // Wait until the customer name heading is visible — this means QB has
+    // finished rendering the customer detail panel and it's safe to inject
+    const nameHeading =
+      document.querySelector('h1[class*="customer"]') ||
+      document.querySelector('h1[class*="entity"]') ||
+      document.querySelector('h2[class*="customer"]') ||
+      document.querySelector('[class*="customerName"]') ||
+      document.querySelector('[class*="entity-name"]') ||
+      document.querySelector('[class*="entityName"]') ||
+      document.querySelector('.notesContainer');
 
-    console.log(`[ClientID] Poll attempt ${attempts}, anchor found:`, anchor?.className?.slice(0, 60));
+    console.log(`[ClientID] Poll attempt ${attempts}, name heading found:`, nameHeading?.className?.slice(0, 60));
 
-    if (anchor) {
+    if (nameHeading) {
       clearInterval(poll);
+      const anchor =
+        document.querySelector('.notesContainer') ||
+        nameHeading.closest('div') ||
+        nameHeading.parentElement;
       insertBadge(customerId, anchor, true);
       return;
     }
