@@ -1,0 +1,77 @@
+/* content/content.css */
+/* Styles for the Client ID badge injected into QuickBooks Online */
+/* Designed to match QB's existing UI aesthetic */
+
+.ciqb-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f4f5f8;
+  border: 1px solid #d4d7e0;
+  border-radius: 6px;
+  padding: 5px 10px;
+  margin: 8px 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  color: #393a3d;
+  user-select: none;
+  /* Subtle so it feels native, not bolted-on */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.ciqb-label {
+  font-weight: 600;
+  color: #6b6d77;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.ciqb-value {
+  font-weight: 500;
+  color: #1a1a2e;
+  font-size: 13px;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  letter-spacing: 0.2px;
+  cursor: text;
+  user-select: text; /* Allow selecting/copying the text directly */
+}
+
+.ciqb-copy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 3px;
+  cursor: pointer;
+  color: #8a8c99;
+  border-radius: 4px;
+  transition: background 0.15s ease, color 0.15s ease;
+  margin-left: 2px;
+}
+
+.ciqb-copy-btn:hover {
+  background: #e2e4ec;
+  color: #393a3d;
+}
+
+.ciqb-copy-btn.ciqb-copied {
+  color: #0a7a3e;
+  background: #d4f0e2;
+}
+
+/* Invoice page variant — slightly different positioning */
+.ciqb-invoice-badge {
+  margin: 0 0 12px 0;
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+
+.ciqb-invoice-badge .ciqb-label {
+  color: #4f46e5;
+}
+
+.ciqb-invoice-badge .ciqb-value {
+  color: #312e81;
+}

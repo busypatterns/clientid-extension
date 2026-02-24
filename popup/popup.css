@@ -1,0 +1,423 @@
+/* popup/popup.css */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #ffffff;
+  color: #1a1a2e;
+  width: 320px;
+  font-size: 13px;
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+.header {
+  background: #2ca01c;
+  padding: 14px 16px;
+  color: white;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  width: 34px;
+  height: 34px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.header-sub {
+  font-size: 11px;
+  opacity: 0.75;
+  margin-top: 1px;
+}
+
+/* ─── Status Banner ─────────────────────────────────────────────────────── */
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #f8f9fb;
+  border-bottom: 1px solid #eaecf0;
+  font-size: 12px;
+  color: #4a4c5a;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #d1d5db;
+  transition: background 0.2s;
+}
+
+.status-dot.active { background: #16a34a; }
+.status-dot.inactive { background: #dc2626; }
+.status-dot.checking { background: #f59e0b; animation: pulse 1s infinite; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ─── Sections ──────────────────────────────────────────────────────────── */
+.section {
+  padding: 16px;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.section-label {
+  display: block;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.license-input {
+  flex: 1;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: #1a1a2e;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.license-input:focus {
+  border-color: #2ca01c;
+  box-shadow: 0 0 0 2px rgba(44, 160, 28, 0.15);
+}
+
+.save-btn {
+  background: #2ca01c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.save-btn:hover { background: #22801a; }
+.save-btn:active { background: #1a6614; }
+
+.input-hint {
+  font-size: 11px;
+  color: #9ca3af;
+  line-height: 1.4;
+}
+
+.link {
+  color: #2ca01c;
+  text-decoration: none;
+}
+
+.link:hover { text-decoration: underline; }
+
+.save-feedback {
+  margin-top: 6px;
+  font-size: 12px;
+  min-height: 16px;
+}
+
+.save-feedback.success { color: #16a34a; }
+.save-feedback.error { color: #dc2626; }
+
+/* ─── Active Section ────────────────────────────────────────────────────── */
+.active-section {
+  padding: 16px;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.active-message {
+  font-size: 13px;
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  padding: 10px 12px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.period-end {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-bottom: 12px;
+}
+
+.change-key-btn {
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 12px;
+}
+
+.change-key-btn:hover {
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+/* ─── QB Connection Section ─────────────────────────────────────────────── */
+.qb-section {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid #eaecf0;
+}
+
+.qb-prompt {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.qb-connect-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: #0077c5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.qb-connect-btn:hover { background: #005fa3; }
+.qb-connect-btn:active { background: #004d85; }
+.qb-connect-btn:disabled {
+  background: #93c5e8;
+  cursor: not-allowed;
+}
+
+.qb-feedback {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  min-height: 16px;
+}
+
+.qb-feedback.success { color: #16a34a; }
+.qb-feedback.error { color: #dc2626; }
+
+/* ─── QB Connected State ────────────────────────────────────────────────── */
+.qb-connected-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #15803d;
+  margin-bottom: 10px;
+}
+
+/* ─── Sync Section ──────────────────────────────────────────────────────── */
+.sync-section {
+  background: #f8f9fb;
+  border: 1px solid #eaecf0;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.sync-status {
+  font-size: 12px;
+  margin-bottom: 8px;
+  min-height: 18px;
+  line-height: 1.4;
+}
+
+.sync-idle {
+  color: #9ca3af;
+}
+
+.sync-running {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #0077c5;
+}
+
+.sync-success {
+  color: #15803d;
+}
+
+.sync-error {
+  color: #dc2626;
+}
+
+.sync-time {
+  display: block;
+  color: #9ca3af;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.sync-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.sync-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+  background: #2ca01c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.sync-btn:hover { background: #22801a; }
+.sync-btn:active { background: #1a6614; }
+.sync-btn:disabled {
+  background: #86d17b;
+  cursor: not-allowed;
+}
+
+.disconnect-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  padding: 6px 8px;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: all 0.15s;
+}
+
+.disconnect-btn:hover {
+  border-color: #dc2626;
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+/* ─── Spinner ───────────────────────────────────────────────────────────── */
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #c7d2fe;
+  border-top-color: #0077c5;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── No Sub Section ────────────────────────────────────────────────────── */
+#noSubSection {
+  text-align: center;
+}
+
+.no-sub-message {
+  color: #6b7280;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.subscribe-btn {
+  display: inline-block;
+  background: #2ca01c;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  padding: 9px 20px;
+  font-weight: 600;
+  font-size: 13px;
+  transition: background 0.15s;
+}
+
+.subscribe-btn:hover { background: #22801a; }
+
+/* ─── Footer ────────────────────────────────────────────────────────────── */
+.footer {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+.footer-link {
+  color: #9ca3af;
+  text-decoration: none;
+  font-size: 11px;
+  transition: color 0.15s;
+}
+
+.footer-link:hover { color: #6b7280; }
+
+.footer-sep {
+  color: #d1d5db;
+  font-size: 11px;
+}
+
+.footer-version {
+  color: #d1d5db;
+  font-size: 11px;
+}

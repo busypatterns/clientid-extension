@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "ClientID for QuickBooks",
+  "version": "1.1.0",
+  "description": "Surfaces hidden QuickBooks internal client IDs as a visible, auto-populated custom field on customer records and invoices.",
+
+  "permissions": [
+    "storage",
+    "alarms",
+    "tabs"
+  ],
+
+  "host_permissions": [
+    "https://app.qbo.intuit.com/*",
+    "https://qbo.intuit.com/*",
+    "https://clientid-server-production.up.railway.app/*"
+  ],
+
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://app.qbo.intuit.com/*",
+        "https://qbo.intuit.com/*"
+      ],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
+    }
+  },
+
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  }
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClientID for QuickBooks</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="popup">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-logo">
+        <div class="logo-icon">QB</div>
+        <div>
+          <div class="header-title">ClientID for QuickBooks</div>
+          <div class="header-sub">by barnacle apps</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Banner -->
+    <div class="status-banner" id="statusBanner">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">Checking license...</span>
+    </div>
+
+    <!-- License Key Section -->
+    <div class="section" id="licenseSection">
+      <label class="section-label">License Key</label>
+      <div class="input-row">
+        <input
+          type="text"
+          id="licenseKeyInput"
+          class="license-input"
+          placeholder="CIQB-XXXXXXXXXXXXXXXXXXXX"
+          spellcheck="false"
+          autocomplete="off"
+        />
+        <button class="save-btn" id="saveBtn">Save</button>
+      </div>
+      <div class="input-hint">
+        Paste the license key from your
+        <a href="#" id="dashboardLink" class="link">account dashboard</a>.
+      </div>
+      <div class="save-feedback" id="saveFeedback"></div>
+    </div>
+
+    <!-- Active State (shown when license is valid) -->
+    <div class="active-section" id="activeSection" style="display:none;">
+      <div class="active-message">
+        ✅ License active
+      </div>
+      <div class="period-end" id="periodEnd"></div>
+
+      <!-- QB Connection Section -->
+      <div class="qb-section" id="qbSection">
+
+        <!-- Not connected state -->
+        <div id="qbNotConnected">
+          <div class="qb-prompt">Connect your QuickBooks account to sync Client IDs as custom fields.</div>
+          <button class="qb-connect-btn" id="connectQbBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            Connect QuickBooks
+          </button>
+          <div class="qb-feedback" id="qbFeedback"></div>
+        </div>
+
+        <!-- Connected state -->
+        <div id="qbConnected" style="display:none;">
+          <div class="qb-connected-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            QuickBooks connected
+          </div>
+
+          <!-- Sync Status -->
+          <div class="sync-section" id="syncSection">
+            <div class="sync-status" id="syncStatus"></div>
+            <div class="sync-actions">
+              <button class="sync-btn" id="syncBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <polyline points="1 20 1 14 7 14"></polyline>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+                Sync Now
+              </button>
+              <button class="disconnect-btn" id="disconnectBtn" title="Disconnect QuickBooks">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="change-key-btn" id="changeKeyBtn">Change License Key</button>
+    </div>
+
+    <!-- No Subscription Section -->
+    <div class="section" id="noSubSection" style="display:none;">
+      <div class="no-sub-message">
+        No active subscription found. Subscribe to activate the extension.
+      </div>
+      <a href="https://clientid-server-production.up.railway.app" target="_blank" class="subscribe-btn">Subscribe Now</a>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <a href="https://clientid-server-production.up.railway.app/support" target="_blank" class="footer-link">Support</a>
+      <span class="footer-sep">·</span>
+      <a href="https://clientid-server-production.up.railway.app/privacy" target="_blank" class="footer-link">Privacy</a>
+      <span class="footer-sep">·</span>
+      <span class="footer-version" id="footerVersion"></span>
+    </div>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
