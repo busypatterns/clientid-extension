@@ -26,7 +26,16 @@ const observer = new MutationObserver(() => {
   }
 });
 
-observer.observe(document.body, { childList: true, subtree: true });
+// document_start means body may not exist yet — wait for it
+function startObserver() {
+  if (document.body) {
+    observer.observe(document.body, { childList: true, subtree: true });
+  } else {
+    document.addEventListener('DOMContentLoaded', () => {
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+  }
+}
 
 // ─── Customer Page ────────────────────────────────────────────────────────────
 function getCustomerIdFromUrl() {
@@ -206,4 +215,10 @@ function removeBadge() {
   if (existing) existing.remove();
 }
 
-init();
+// Wait for DOM to be ready before injecting badge
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+startObserver();
