@@ -17,14 +17,12 @@ const observer = new MutationObserver(() => {
   if (location.href !== lastUrl) {
     lastUrl = location.href;
     removeBadge();
-
-    // Debounce: QB fires many mutations during navigation.
-    // Wait until things settle before trying to inject.
     clearTimeout(navDebounceTimer);
     navDebounceTimer = setTimeout(() => {
+      console.log('[ClientID] URL changed, re-injecting badge for:', location.href);
       injectBadgeIfCustomerPage();
       injectBadgeIfInvoicePage();
-    }, 600);
+    }, 800);
   }
 });
 
@@ -48,13 +46,17 @@ function isCustomerPage() {
 }
 
 function injectBadgeIfCustomerPage() {
-  if (!isCustomerPage()) return;
+  if (!isCustomerPage()) {
+    console.log('[ClientID] Not a customer page, skipping');
+    return;
+  }
   const customerId = getCustomerIdFromUrl();
+  console.log('[ClientID] Customer page detected, ID from URL:', customerId);
   if (!customerId) return;
 
   // Poll for a stable container to inject into
   let attempts = 0;
-  const maxAttempts = 20;
+  const maxAttempts = 30;
 
   const poll = setInterval(() => {
     attempts++;
@@ -76,13 +78,17 @@ function injectBadgeIfCustomerPage() {
       document.querySelector('div[class*="main"]') ||
       document.querySelector('div[class]');
 
+    console.log(`[ClientID] Poll attempt ${attempts}, anchor found:`, anchor?.className?.slice(0, 60));
+
     if (anchor) {
       clearInterval(poll);
       insertBadge(customerId, anchor, true);
+      return;
     }
 
     if (attempts >= maxAttempts) {
       clearInterval(poll);
+      console.log('[ClientID] Max attempts reached, using fixed fallback');
       // Last resort — inject at top of body
       if (!document.getElementById(BADGE_ID)) {
         const fixed = document.createElement('div');
