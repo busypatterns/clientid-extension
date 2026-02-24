@@ -74,26 +74,14 @@ function injectBadgeIfCustomerPage() {
       return;
     }
 
-    // Wait until the customer name heading is visible — this means QB has
-    // finished rendering the customer detail panel and it's safe to inject
-    const nameHeading =
-      document.querySelector('h1[class*="customer"]') ||
-      document.querySelector('h1[class*="entity"]') ||
-      document.querySelector('h2[class*="customer"]') ||
-      document.querySelector('[class*="customerName"]') ||
-      document.querySelector('[class*="entity-name"]') ||
-      document.querySelector('[class*="entityName"]') ||
-      document.querySelector('.notesContainer');
+    // Wait for StageData__HeaderWrapper — this is where QB renders the customer name
+    const headerWrapper = document.querySelector('[class*="StageData__HeaderWrapper"]');
 
-    console.log(`[ClientID] Poll attempt ${attempts}, name heading found:`, nameHeading?.className?.slice(0, 60));
+    console.log(`[ClientID] Poll attempt ${attempts}, header found:`, !!headerWrapper);
 
-    if (nameHeading) {
+    if (headerWrapper) {
       clearInterval(poll);
-      const anchor =
-        document.querySelector('.notesContainer') ||
-        nameHeading.closest('div') ||
-        nameHeading.parentElement;
-      insertBadge(customerId, anchor, true);
+      insertBadge(customerId, headerWrapper, false);
       return;
     }
 
