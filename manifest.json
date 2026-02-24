@@ -13,6 +13,7 @@
   "host_permissions": [
     "https://app.qbo.intuit.com/*",
     "https://qbo.intuit.com/*",
+    "https://sandbox.qbo.intuit.com/*",
     "https://clientid-server-production.up.railway.app/*"
   ],
 
@@ -24,7 +25,8 @@
     {
       "matches": [
         "https://app.qbo.intuit.com/*",
-        "https://qbo.intuit.com/*"
+        "https://qbo.intuit.com/*",
+        "https://sandbox.qbo.intuit.com/*"
       ],
       "js": ["content/content.js"],
       "css": ["content/content.css"],
