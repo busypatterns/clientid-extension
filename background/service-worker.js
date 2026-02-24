@@ -76,29 +76,46 @@ async function setLicenseStatus(status) {
 // We watch for the server's OAuth success page tab to detect when the user
 // has completed the QuickBooks authorization flow.
 
+let oauthTabHandled = false;
+
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status !== 'complete') return;
   if (!tab.url) return;
+  if (oauthTabHandled) return;
 
-  const successUrl = `${SERVER_URL}/auth/qb/success`;
-
-  if (tab.url.startsWith(successUrl)) {
-    console.log('[ClientID] QB OAuth success detected.');
-
-    // Store QB connected status
-    await chrome.storage.local.set({
-      qbConnected: true,
-      qbConnectedAt: Date.now(),
-    });
-
-    // Close the success tab after a short delay
-    setTimeout(() => {
-      chrome.tabs.remove(tabId).catch(() => {});
-    }, 1500);
-
-    // Trigger sync automatically
-    await triggerSync();
+  // Only match the EXACT success page path
+  let pathname;
+  try {
+    const tabUrl = new URL(tab.url);
+    // Must be our server domain
+    const serverUrl = new URL(SERVER_URL);
+    if (tabUrl.hostname !== serverUrl.hostname) return;
+    pathname = tabUrl.pathname;
+  } catch (e) {
+    return;
   }
+
+  if (pathname !== '/auth/qb/success') return;
+
+  // Prevent handling this multiple times
+  oauthTabHandled = true;
+
+  console.log('[ClientID] QB OAuth success detected.');
+
+  // Store QB connected status
+  await chrome.storage.local.set({
+    qbConnected: true,
+    qbConnectedAt: Date.now(),
+  });
+
+  // Close the success tab after a longer delay so user can see it
+  setTimeout(() => {
+    chrome.tabs.remove(tabId).catch(() => {});
+    oauthTabHandled = false;
+  }, 3000);
+
+  // Trigger sync automatically
+  await triggerSync();
 });
 
 // ─── Sync ────────────────────────────────────────────────────────────────────
