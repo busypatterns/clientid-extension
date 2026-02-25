@@ -3,32 +3,34 @@
 #clientid-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   background: #f0f4ff;
   border: 1px solid #c7d4f5;
-  border-radius: 6px;
-  padding: 5px 10px;
-  margin: 8px 0;
+  border-radius: 5px;
+  padding: 3px 7px;
+  margin: 6px 0 0 8px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 1;
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   z-index: 9999;
   position: relative;
+  vertical-align: middle;
 }
 
 .clientid-label {
   color: #5c6bc0;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
 .clientid-value {
   color: #1a237e;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 
