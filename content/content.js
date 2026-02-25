@@ -105,7 +105,7 @@ function injectBadgeIfCustomerPage() {
 
     if (headerWrapper) {
       clearInterval(poll);
-      insertBadge(customerId, nameEl, false);
+      insertBadge(customerId, headerWrapper, false);
       return;
     }
 
