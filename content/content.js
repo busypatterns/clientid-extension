@@ -155,10 +155,10 @@ function injectBadgeIfInvoicePage() {
     }
 
     const input =
+      document.querySelector('[data-cy="quickfill-contact"] input') ||
       document.querySelector('[name="customer_name"]') ||
       document.querySelector('.nameInput input') ||
-      document.querySelector('[class*="rethinkCustomerContainer"] input') ||
-      document.querySelector('[class*="txp-capability-rethinkCustomer"] input');
+      document.querySelector('[class*="rethinkCustomerContainer"] input');
     const customerName = input?.value?.trim();
 
     if (customerName) {
