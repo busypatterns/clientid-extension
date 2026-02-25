@@ -32,6 +32,7 @@
   font-weight: 700;
   font-size: 12px;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .clientid-copy {
