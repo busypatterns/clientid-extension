@@ -78,9 +78,8 @@ function injectBadgeIfCustomerPage() {
 
     // Wait for customer name element — class differs between sandbox and production
     const headerWrapper =
-      document.querySelector('[class*="StageData__HeaderWrapper"]') ||
-      document.querySelector('[class*="column-customerName"]')?.closest('[class*="column-align-start"]')?.parentElement ||
-      document.querySelector('[class*="column-customerName"]')?.parentElement;
+      document.querySelector('[class*="StageDataV2__NameWraper"]') ||
+      document.querySelector('[class*="StageData__HeaderWrapper"]');
 
     console.log(`[ClientID] Poll attempt ${attempts}, header found:`, !!headerWrapper);
 
