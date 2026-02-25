@@ -460,9 +460,10 @@ async function loadIdMode() {
   }
 }
 
-idModeQb.addEventListener('change', () => {
+idModeQb.addEventListener('change', async () => {
   idModeCustomInput.style.display = 'none';
   idModeHint.textContent = 'Showing QB internal IDs (e.g. 1, 2, 67)';
+  await chrome.storage.local.set({ idMode: 'qb' });
 });
 
 idModeCustom.addEventListener('change', () => {
