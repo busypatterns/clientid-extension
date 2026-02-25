@@ -12,6 +12,7 @@ async function init() {
 
 // ─── URL Watcher (QB is a SPA) ────────────────────────────────────────────────
 let navDebounceTimer = null;
+let badgeGuardTimer = null;
 
 const observer = new MutationObserver(() => {
   if (location.href !== lastUrl) {
@@ -25,6 +26,18 @@ const observer = new MutationObserver(() => {
       injectBadgeIfCustomerPage();
       injectBadgeIfInvoicePage();
     }, 800);
+    return;
+  }
+
+  // If badge was removed by QB re-render, re-inject it
+  if (!document.getElementById(BADGE_ID)) {
+    clearTimeout(badgeGuardTimer);
+    badgeGuardTimer = setTimeout(() => {
+      if (!document.getElementById(BADGE_ID)) {
+        injectBadgeIfCustomerPage();
+        injectBadgeIfInvoicePage();
+      }
+    }, 500);
   }
 });
 
