@@ -18,7 +18,9 @@ const observer = new MutationObserver(() => {
     lastUrl = location.href;
     removeBadge();
     clearTimeout(navDebounceTimer);
-    navDebounceTimer = setTimeout(() => {
+    navDebounceTimer = setTimeout(async () => {
+      const { licenseStatus } = await chrome.storage.local.get('licenseStatus');
+      if (!licenseStatus?.valid) return;
       console.log('[ClientID] URL changed, re-injecting badge for:', location.href);
       injectBadgeIfCustomerPage();
       injectBadgeIfInvoicePage();
@@ -74,8 +76,11 @@ function injectBadgeIfCustomerPage() {
       return;
     }
 
-    // Wait for StageData__HeaderWrapper — this is where QB renders the customer name
-    const headerWrapper = document.querySelector('[class*="StageData__HeaderWrapper"]');
+    // Wait for customer name element — class differs between sandbox and production
+    const headerWrapper =
+      document.querySelector('[class*="StageData__HeaderWrapper"]') ||
+      document.querySelector('[class*="column-customerName"]')?.closest('[class*="column-align-start"]')?.parentElement ||
+      document.querySelector('[class*="column-customerName"]')?.parentElement;
 
     console.log(`[ClientID] Poll attempt ${attempts}, header found:`, !!headerWrapper);
 
@@ -206,9 +211,18 @@ function removeBadge() {
 }
 
 // Wait for DOM to be ready before injecting badge
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
+async function bootstrap() {
+  const { licenseStatus } = await chrome.storage.local.get('licenseStatus');
+  if (!licenseStatus?.valid) {
+    console.log('[ClientID] License not active, skipping badge injection');
+    return;
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 }
+
+bootstrap();
 startObserver();
