@@ -28,6 +28,22 @@ const syncBtn = document.getElementById('syncBtn');
 const syncStatus = document.getElementById('syncStatus');
 const disconnectBtn = document.getElementById('disconnectBtn');
 
+// Export elements
+const exportBtn = document.getElementById('exportBtn');
+const exportFeedback = document.getElementById('exportFeedback');
+
+// Search elements
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+// ID mode elements
+const idModeQb = document.getElementById('idModeQb');
+const idModeCustom = document.getElementById('idModeCustom');
+const idModeCustomInput = document.getElementById('idModeCustomInput');
+const customStartInput = document.getElementById('customStartInput');
+const saveIdModeBtn = document.getElementById('saveIdModeBtn');
+const idModeHint = document.getElementById('idModeHint');
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   const manifest = chrome.runtime.getManifest();
@@ -213,6 +229,135 @@ syncBtn.addEventListener('click', async () => {
   renderSyncStatus(data);
 });
 
+// ─── Search by Customer ID (live) ────────────────────────────────────────────
+let customerMapCache = null;
+let realmIdCache = null;
+
+async function getSearchData() {
+  if (!customerMapCache) {
+    const data = await chrome.storage.local.get(['customerMap', 'qbRealmId']);
+    customerMapCache = data.customerMap || {};
+    realmIdCache = data.qbRealmId || '';
+  }
+  return { customerMap: customerMapCache, realmId: realmIdCache };
+}
+
+function buildQbLink(customerId, realmId) {
+  if (!realmId) return null;
+  return `https://app.qbo.intuit.com/app/customerdetail?nameId=${customerId}&companyId=${realmId}`;
+}
+
+searchInput.addEventListener('input', async () => {
+  const query = searchInput.value.trim().toLowerCase();
+
+  if (!query) {
+    searchResults.innerHTML = '';
+    return;
+  }
+
+  const { customerMap, realmId } = await getSearchData();
+
+  // Build ID→name map and filter matches
+  const matches = [];
+  for (const [name, id] of Object.entries(customerMap)) {
+    const idStr = String(id);
+    if (idStr.startsWith(query) || name.toLowerCase().includes(query)) {
+      matches.push({ id: idStr, name });
+    }
+  }
+
+  // Sort: ID matches first (numerically), then name matches
+  matches.sort((a, b) => {
+    const aIdMatch = a.id.startsWith(query);
+    const bIdMatch = b.id.startsWith(query);
+    if (aIdMatch && !bIdMatch) return -1;
+    if (!aIdMatch && bIdMatch) return 1;
+    return parseInt(a.id) - parseInt(b.id);
+  });
+
+  const top10 = matches.slice(0, 10);
+
+  if (top10.length === 0) {
+    searchResults.innerHTML = `<div class="search-empty">No customers match "${searchInput.value.trim()}"</div>`;
+    return;
+  }
+
+  searchResults.innerHTML = top10.map(({ id, name }) => {
+    const url = buildQbLink(id, realmId);
+    const nameHtml = url
+      ? `<a href="#" class="search-name link" data-url="${url}">${name}</a>`
+      : `<span class="search-name">${name}</span>`;
+    return `
+      <div class="search-row">
+        <span class="search-id">#${id}</span>
+        ${nameHtml}
+      </div>`;
+  }).join('');
+
+  if (matches.length > 10) {
+    searchResults.innerHTML += `<div class="search-more">+${matches.length - 10} more — type more to narrow down</div>`;
+  }
+
+  // Navigate existing QB tab instead of opening a new one
+  searchResults.querySelectorAll('a[data-url]').forEach(link => {
+    link.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const url = link.dataset.url;
+      const tabs = await chrome.tabs.query({ url: ['https://app.qbo.intuit.com/*', 'https://qbo.intuit.com/*', 'https://sandbox.qbo.intuit.com/*'] });
+      if (tabs.length > 0) {
+        await chrome.tabs.update(tabs[0].id, { url, active: true });
+        await chrome.windows.update(tabs[0].windowId, { focused: true });
+      } else {
+        // No QB tab open — open a new one as fallback
+        chrome.tabs.create({ url });
+      }
+      window.close();
+    });
+  });
+});
+
+// ─── Export CSV Button ────────────────────────────────────────────────────────
+exportBtn.addEventListener('click', async () => {
+  exportBtn.disabled = true;
+  exportBtn.textContent = 'Fetching data...';
+  exportFeedback.textContent = '';
+
+  try {
+    const { licenseKey } = await chrome.storage.local.get('licenseKey');
+    const response = await fetch(`${SERVER_URL}/auth/qb/export/customers?licenseKey=${encodeURIComponent(licenseKey)}`);
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Export failed');
+    }
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const date = new Date().toISOString().slice(0, 10);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `customers-${date}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    exportFeedback.className = 'export-feedback success';
+    exportFeedback.textContent = '✅ Download started';
+    setTimeout(() => { exportFeedback.textContent = ''; }, 3000);
+  } catch (err) {
+    exportFeedback.className = 'export-feedback error';
+    exportFeedback.textContent = `❌ ${err.message}`;
+  } finally {
+    exportBtn.disabled = false;
+    exportBtn.innerHTML = `
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Export Customer List (CSV)`;
+  }
+});
+
 // ─── Disconnect Button ───────────────────────────────────────────────────────
 disconnectBtn.addEventListener('click', async () => {
   if (!confirm('Disconnect QuickBooks? You can reconnect anytime.')) return;
@@ -297,3 +442,49 @@ function formatTimeAgo(timestamp) {
   const days = Math.floor(hours / 24);
   return `${days}d ago`;
 }
+
+// ─── ID Mode ──────────────────────────────────────────────────────────────────
+async function loadIdMode() {
+  const { idMode, customIdStart } = await chrome.storage.local.get(['idMode', 'customIdStart']);
+  const mode = idMode || 'qb';
+
+  if (mode === 'qb') {
+    idModeQb.checked = true;
+    idModeCustomInput.style.display = 'none';
+    idModeHint.textContent = 'Showing QB internal IDs (e.g. 1, 2, 67)';
+  } else {
+    idModeCustom.checked = true;
+    idModeCustomInput.style.display = 'flex';
+    customStartInput.value = customIdStart || 1000;
+    idModeHint.textContent = `Custom IDs active — starting from ${customIdStart || 1000}`;
+  }
+}
+
+idModeQb.addEventListener('change', () => {
+  idModeCustomInput.style.display = 'none';
+  idModeHint.textContent = 'Showing QB internal IDs (e.g. 1, 2, 67)';
+});
+
+idModeCustom.addEventListener('change', () => {
+  idModeCustomInput.style.display = 'flex';
+  idModeHint.textContent = 'Enter a starting number and click Apply, then Sync.';
+});
+
+saveIdModeBtn.addEventListener('click', async () => {
+  const start = parseInt(customStartInput.value);
+  if (!start || start < 1) {
+    idModeHint.textContent = 'Please enter a valid starting number.';
+    return;
+  }
+  await chrome.storage.local.set({ idMode: 'custom', customIdStart: start });
+  idModeHint.textContent = `✓ Saved — custom IDs will start from ${start} on next sync.`;
+  setTimeout(() => {
+    idModeHint.textContent = `Custom IDs active — starting from ${start}`;
+  }, 3000);
+});
+
+// Load ID mode when QB is connected
+document.addEventListener('DOMContentLoaded', () => {
+  // Load ID mode after a short delay to ensure QB state is loaded
+  setTimeout(loadIdMode, 100);
+});

@@ -394,6 +394,120 @@ body {
 
 .subscribe-btn:hover { background: #22801a; }
 
+/* ─── Search Section ────────────────────────────────────────────────────── */
+.search-section {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.search-section .license-input {
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin-bottom: 6px;
+}
+
+.search-results {
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 6px;
+  border: 1px solid #eaecf0;
+  background: #fff;
+  display: none;
+}
+
+.search-results:not(:empty) {
+  display: block;
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.1s;
+}
+
+.search-row:last-child {
+  border-bottom: none;
+}
+
+.search-row:hover {
+  background: #f8f9fb;
+}
+
+.search-id {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  color: #6b7280;
+  background: #f3f4f6;
+  border-radius: 4px;
+  padding: 2px 5px;
+  flex-shrink: 0;
+}
+
+.search-name {
+  font-size: 12px;
+  color: #1a1a2e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-empty,
+.search-more {
+  padding: 8px 10px;
+  font-size: 11px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+/* ─── Export Section ────────────────────────────────────────────────────── */
+.export-section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eaecf0;
+}
+
+.export-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.export-btn:hover {
+  border-color: #2ca01c;
+  color: #2ca01c;
+  background: #f0fdf4;
+}
+
+.export-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.export-feedback {
+  margin-top: 6px;
+  font-size: 11px;
+  text-align: center;
+  min-height: 14px;
+}
+
+.export-feedback.success { color: #16a34a; }
+.export-feedback.error { color: #dc2626; }
+
 /* ─── Footer ────────────────────────────────────────────────────────────── */
 .footer {
   padding: 10px 16px;
@@ -420,4 +534,46 @@ body {
 .footer-version {
   color: #d1d5db;
   font-size: 11px;
+}
+
+/* ── ID Mode Section ── */
+.id-mode-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.id-mode-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.id-mode-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.id-mode-option input[type="radio"] {
+  accent-color: var(--green);
+  width: 14px;
+  height: 14px;
+}
+
+.id-mode-custom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.id-mode-hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
 }

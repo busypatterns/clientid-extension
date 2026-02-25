@@ -98,7 +98,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
 // ─── Sync ────────────────────────────────────────────────────────────────────
 async function triggerSync() {
-  const { licenseKey } = await chrome.storage.local.get('licenseKey');
+  const { licenseKey, idMode, customIdStart } = await chrome.storage.local.get(['licenseKey', 'idMode', 'customIdStart']);
   if (!licenseKey) return { success: false, error: 'No license key.' };
 
   await chrome.storage.local.set({
@@ -110,7 +110,7 @@ async function triggerSync() {
     const response = await fetch(`${SERVER_URL}/auth/qb/sync`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ licenseKey }),
+      body: JSON.stringify({ licenseKey, idMode: idMode || 'qb', customIdStart: customIdStart || 1000 }),
     });
 
     const data = await response.json();
@@ -121,10 +121,9 @@ async function triggerSync() {
         await chrome.storage.local.set({ customerMap: data.customerMap });
         console.log('[ClientID] Customer map stored:', Object.keys(data.customerMap).length, 'entries');
       }
-
-      // Store realmId for building QB deep links in the popup
-      if (data.realmId) {
-        await chrome.storage.local.set({ qbRealmId: data.realmId });
+      // Store the QB ID → display ID map for badge lookups
+      if (data.idMap) {
+        await chrome.storage.local.set({ idMap: data.idMap });
       }
 
       await chrome.storage.local.set({

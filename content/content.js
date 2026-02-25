@@ -74,20 +74,24 @@ function injectBadgeIfCustomerPage() {
     console.log('[ClientID] Not a customer page, skipping');
     return;
   }
-  const customerId = getCustomerIdFromUrl();
-  console.log('[ClientID] Customer page detected, ID from URL:', customerId);
-  if (!customerId) return;
+  const qbId = getCustomerIdFromUrl();
+  console.log('[ClientID] Customer page detected, ID from URL:', qbId);
+  if (!qbId) return;
 
   let attempts = 0;
   const maxAttempts = 30;
 
-  const poll = setInterval(() => {
+  const poll = setInterval(async () => {
     attempts++;
 
     if (document.getElementById(BADGE_ID)) {
       clearInterval(poll);
       return;
     }
+
+    // Look up display ID from idMap (custom mode) or use QB ID directly
+    const { idMap } = await chrome.storage.local.get('idMap');
+    const customerId = (idMap && idMap[qbId]) ? idMap[qbId] : qbId;
 
     // Wait for customer name element — class differs between sandbox and production
     const nameEl =

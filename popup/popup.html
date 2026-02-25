@@ -80,6 +80,20 @@
             QuickBooks connected
           </div>
 
+          <!-- Search by Customer ID -->
+          <div class="search-section" id="searchSection">
+            <label class="section-label">Search Customers</label>
+            <input
+              type="text"
+              id="searchInput"
+              class="license-input"
+              placeholder="ID or name..."
+              spellcheck="false"
+              autocomplete="off"
+            />
+            <div class="search-results" id="searchResults"></div>
+          </div>
+
           <!-- Sync Status -->
           <div class="sync-section" id="syncSection">
             <div class="sync-status" id="syncStatus"></div>
@@ -100,6 +114,40 @@
               </button>
             </div>
           </div>
+
+          <!-- ID Mode Settings -->
+          <div class="id-mode-section" id="idModeSection">
+            <label class="section-label">Customer ID Mode</label>
+            <div class="id-mode-options">
+              <label class="id-mode-option">
+                <input type="radio" name="idMode" value="qb" id="idModeQb" />
+                <span>Use QuickBooks ID</span>
+              </label>
+              <label class="id-mode-option">
+                <input type="radio" name="idMode" value="custom" id="idModeCustom" />
+                <span>Custom starting number</span>
+              </label>
+            </div>
+            <div class="id-mode-custom" id="idModeCustomInput" style="display:none;">
+              <input type="number" id="customStartInput" class="license-input" placeholder="e.g. 1000" min="1" style="width:120px;" />
+              <button class="save-btn" id="saveIdModeBtn">Apply</button>
+            </div>
+            <div class="id-mode-hint" id="idModeHint"></div>
+          </div>
+
+          <!-- Export -->
+          <div class="export-section">
+            <button class="export-btn" id="exportBtn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Export Customer List (CSV)
+            </button>
+            <div class="export-feedback" id="exportFeedback"></div>
+          </div>
+
         </div>
       </div>
 
