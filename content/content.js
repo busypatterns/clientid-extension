@@ -77,15 +77,18 @@ function injectBadgeIfCustomerPage() {
     }
 
     // Wait for customer name element — class differs between sandbox and production
-    const headerWrapper =
-      document.querySelector('[class*="StageDataV2__NameWraper"]') ||
-      document.querySelector('[class*="StageData__HeaderWrapper"]');
+    const nameEl =
+      document.querySelector('[data-testid="stageData-name"]') ||
+      document.querySelector('[class*="StageDataV2__Name-"]') ||
+      document.querySelector('[class*="StageData__Name"]');
+
+    const headerWrapper = nameEl ? nameEl.parentElement : null;
 
     console.log(`[ClientID] Poll attempt ${attempts}, header found:`, !!headerWrapper);
 
     if (headerWrapper) {
       clearInterval(poll);
-      insertBadge(customerId, headerWrapper, false);
+      insertBadge(customerId, nameEl, false);
       return;
     }
 
