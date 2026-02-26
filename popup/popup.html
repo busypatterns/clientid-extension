@@ -117,22 +117,30 @@
 
           <!-- ID Mode Settings -->
           <div class="id-mode-section" id="idModeSection">
-            <label class="section-label">Customer ID Mode</label>
-            <div class="id-mode-options">
-              <label class="id-mode-option">
-                <input type="radio" name="idMode" value="qb" id="idModeQb" />
-                <span>Use QuickBooks ID</span>
-              </label>
-              <label class="id-mode-option">
-                <input type="radio" name="idMode" value="custom" id="idModeCustom" />
-                <span>Custom starting number</span>
-              </label>
+            <button class="migrate-toggle-btn" id="idModeToggleBtn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path>
+              </svg>
+              Customer ID Mode
+            </button>
+            <div id="idModePanel" style="display:none;">
+              <div class="id-mode-options">
+                <label class="id-mode-option">
+                  <input type="radio" name="idMode" value="qb" id="idModeQb" />
+                  <span>Use QuickBooks ID</span>
+                </label>
+                <label class="id-mode-option">
+                  <input type="radio" name="idMode" value="custom" id="idModeCustom" />
+                  <span>Custom starting number</span>
+                </label>
+              </div>
+              <div class="id-mode-custom" id="idModeCustomInput" style="display:none;">
+                <input type="number" id="customStartInput" class="license-input" placeholder="e.g. 1000" min="1" style="width:120px;" />
+                <button class="save-btn" id="saveIdModeBtn">Apply</button>
+              </div>
+              <div class="id-mode-hint" id="idModeHint"></div>
             </div>
-            <div class="id-mode-custom" id="idModeCustomInput" style="display:none;">
-              <input type="number" id="customStartInput" class="license-input" placeholder="e.g. 1000" min="1" style="width:120px;" />
-              <button class="save-btn" id="saveIdModeBtn">Apply</button>
-            </div>
-            <div class="id-mode-hint" id="idModeHint"></div>
           </div>
 
 
