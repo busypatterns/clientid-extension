@@ -224,16 +224,21 @@ function insertBadge(customerId, anchor, prepend = false) {
     });
   });
 
+  // Wrap in a centered container
+  const wrapper = document.createElement('div');
+  wrapper.id = 'clientid-badge-wrapper';
+  wrapper.appendChild(badge);
+
   if (prepend) {
-    anchor.prepend(badge);
+    anchor.prepend(wrapper);
   } else {
-    anchor.insertAdjacentElement('afterend', badge);
+    anchor.insertAdjacentElement('afterend', wrapper);
   }
 }
 
 function removeBadge() {
-  // Remove all badges — QB sometimes clones nodes leaving orphans
-  document.querySelectorAll(`#${BADGE_ID}, [id="${BADGE_ID}"]`).forEach(el => el.remove());
+  // Remove all badges and wrappers — QB sometimes clones nodes leaving orphans
+  document.querySelectorAll(`#${BADGE_ID}, [id="${BADGE_ID}"], #clientid-badge-wrapper`).forEach(el => el.remove());
 }
 
 // Wait for DOM to be ready before injecting badge
