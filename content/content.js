@@ -148,41 +148,27 @@ function isInvoicePage() {
 function injectBadgeIfInvoicePage() {
   if (!isInvoicePage()) return;
 
-  let attempts = 0;
-  const maxAttempts = 20;
+  let lastCustomerName = null;
 
-  const poll = setInterval(async () => {
-    attempts++;
-
-    if (document.getElementById(BADGE_ID)) {
-      clearInterval(poll);
-      return;
-    }
-
-    const input =
-      document.querySelector('[data-cy="quickfill-contact"] input') ||
-      document.querySelector('[name="customer_name"]') ||
-      document.querySelector('.nameInput input') ||
-      document.querySelector('[class*="rethinkCustomerContainer"] input');
+  async function updateInvoiceBadge() {
+    const input = getInvoiceInput();
     const customerName = input?.value?.trim();
-
-    if (customerName) {
-      clearInterval(poll);
-      const customerId = await getCustomerIdByName(customerName);
-      if (!customerId) {
-        console.log('[ClientID] No Customer ID found for:', customerName);
-        return;
-      }
-      const anchor = input.closest('div') || input.parentElement;
-      insertBadge(customerId, anchor);
-      return;
+    if (!customerName || customerName === lastCustomerName) return;
+    lastCustomerName = customerName;
+    console.log('[ClientID] Invoice customer:', customerName);
+    const customerId = await getCustomerIdByName(customerName);
+    const inputRow = input.closest('[data-cy="quickfill-contact"]') ||
+                     input.closest('[class*="rethinkCustomerContainer"]') ||
+                     input.parentElement;
+    if (customerId) {
+      insertInvoiceBadge(customerId, inputRow);
+    } else {
+      document.getElementById('clientid-invoice-badge')?.remove();
     }
+  }
 
-    if (attempts >= maxAttempts) {
-      clearInterval(poll);
-      console.log('[ClientID] Gave up waiting for customer name on invoice page');
-    }
-  }, 500);
+  // Poll every 300ms forever — catches initial load and any customer switch
+  setInterval(updateInvoiceBadge, 300);
 }
 
 // Ask service worker for Customer ID by name
