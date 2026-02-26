@@ -238,7 +238,7 @@ function insertBadge(customerId, anchor, prepend = false) {
 
 function removeBadge() {
   // Remove all badges and wrappers — QB sometimes clones nodes leaving orphans
-  document.querySelectorAll(`#${BADGE_ID}, [id="${BADGE_ID}"], #clientid-badge-wrapper, #clientid-invoice-badge`).forEach(el => el.remove());
+  document.querySelectorAll(`#${BADGE_ID}, [id="${BADGE_ID}"], #clientid-badge-wrapper`).forEach(el => el.remove());
 }
 
 // Wait for DOM to be ready before injecting badge

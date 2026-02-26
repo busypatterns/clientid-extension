@@ -54,8 +54,18 @@
   background: #d4f0d2;
 }
 
-/* Invoice page — badge sits inline next to dropdown */
+/* Center the badge under the customer name */
+#clientid-badge-wrapper {
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+/* Invoice badge — fixed position to avoid triggering QB dropdowns */
 #clientid-invoice-badge {
+  position: fixed;
+  top: 80px;
+  right: 24px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -63,13 +73,10 @@
   border: 1px solid #2CA01C;
   border-radius: 5px;
   padding: 3px 7px;
-  margin-left: 12px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 11px;
   line-height: 1;
-  box-shadow: 0 1px 3px rgba(44,160,28,0.12);
-  vertical-align: middle;
-  position: relative;
-  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(44,160,28,0.2);
+  z-index: 99999;
   white-space: nowrap;
 }
