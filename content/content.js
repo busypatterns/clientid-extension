@@ -29,14 +29,26 @@ const observer = new MutationObserver(() => {
     return;
   }
 
-  // If badge was removed by QB re-render, re-inject it
+  // If badge was removed by QB re-render (e.g. after saving customer), re-inject it
+  // QB save triggers a full re-render that can take 1-3 seconds
   if (!document.getElementById(BADGE_ID) && location.href === lastUrl) {
     clearTimeout(badgeGuardTimer);
     badgeGuardTimer = setTimeout(() => {
       if (!document.getElementById(BADGE_ID) && location.href === lastUrl) {
         injectBadgeIfCustomerPage();
+        // Also retry at 2s and 4s in case QB re-render is slow
+        setTimeout(() => {
+          if (!document.getElementById(BADGE_ID) && location.href === lastUrl) {
+            injectBadgeIfCustomerPage();
+          }
+        }, 1500);
+        setTimeout(() => {
+          if (!document.getElementById(BADGE_ID) && location.href === lastUrl) {
+            injectBadgeIfCustomerPage();
+          }
+        }, 3500);
       }
-    }, 500);
+    }, 800);
   }
 });
 
