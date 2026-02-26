@@ -577,3 +577,165 @@ body {
   color: var(--muted);
   margin-top: 4px;
 }
+
+/* ─── Migrate Section ───────────────────────────────────────────────────── */
+.migrate-section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eaecf0;
+}
+
+.migrate-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.migrate-toggle-btn:hover {
+  border-color: #2ca01c;
+  color: #2ca01c;
+  background: #f0fdf4;
+}
+
+.migrate-panel {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.migrate-desc {
+  font-size: 11px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.migrate-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 11px;
+  color: #374151;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.migrate-option input[type="checkbox"] {
+  accent-color: #2ca01c;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.migrate-scan-btn {
+  width: 100%;
+  background: #2ca01c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.migrate-scan-btn:hover { background: #22801a; }
+.migrate-scan-btn:disabled { background: #86d17b; cursor: not-allowed; }
+
+.migrate-results {
+  max-height: 180px;
+  overflow-y: auto;
+  border-radius: 6px;
+  border: 1px solid #eaecf0;
+  background: #fff;
+  display: none;
+}
+
+.migrate-results:not(:empty) { display: block; }
+
+.migrate-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 11px;
+}
+
+.migrate-row:last-child { border-bottom: none; }
+
+.migrate-row input[type="checkbox"] {
+  accent-color: #2ca01c;
+  flex-shrink: 0;
+}
+
+.migrate-id {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  border-radius: 4px;
+  padding: 2px 5px;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.migrate-name {
+  flex: 1;
+  color: #1a1a2e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.migrate-source {
+  font-size: 10px;
+  color: #9ca3af;
+  background: #f3f4f6;
+  border-radius: 3px;
+  padding: 1px 4px;
+  flex-shrink: 0;
+}
+
+.migrate-empty {
+  padding: 10px;
+  font-size: 11px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.migrate-confirm-btn {
+  width: 100%;
+  background: #1a1a2e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.migrate-confirm-btn:hover { background: #2ca01c; }
+.migrate-confirm-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.migrate-feedback {
+  font-size: 11px;
+  text-align: center;
+  min-height: 14px;
+}
+
+.migrate-feedback.success { color: #16a34a; }
+.migrate-feedback.error { color: #dc2626; }

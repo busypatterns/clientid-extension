@@ -135,6 +135,33 @@
             <div class="id-mode-hint" id="idModeHint"></div>
           </div>
 
+
+          <!-- Migrate Existing IDs -->
+          <div class="migrate-section" id="migrateSection">
+            <button class="migrate-toggle-btn" id="migrateToggleBtn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="17 1 21 5 17 9"></polyline>
+                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                <polyline points="7 23 3 19 7 15"></polyline>
+                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+              </svg>
+              Migrate Existing IDs
+            </button>
+            <div class="migrate-panel" id="migratePanel" style="display:none;">
+              <p class="migrate-desc">Scan your customer names and fields for existing ID numbers and import them automatically.</p>
+              <label class="migrate-option">
+                <input type="checkbox" id="migrateCleanSource" checked />
+                <span>Remove number from original field after migrating</span>
+              </label>
+              <button class="migrate-scan-btn" id="migrateScanBtn">Scan Customers</button>
+              <div class="migrate-results" id="migrateResults"></div>
+              <button class="migrate-confirm-btn" id="migrateConfirmBtn" style="display:none;">
+                Confirm Migration
+              </button>
+              <div class="migrate-feedback" id="migrateFeedback"></div>
+            </div>
+          </div>
+
           <!-- Export -->
           <div class="export-section">
             <button class="export-btn" id="exportBtn">

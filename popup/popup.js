@@ -460,10 +460,9 @@ async function loadIdMode() {
   }
 }
 
-idModeQb.addEventListener('change', async () => {
+idModeQb.addEventListener('change', () => {
   idModeCustomInput.style.display = 'none';
   idModeHint.textContent = 'Showing QB internal IDs (e.g. 1, 2, 67)';
-  await chrome.storage.local.set({ idMode: 'qb' });
 });
 
 idModeCustom.addEventListener('change', () => {
@@ -488,4 +487,124 @@ saveIdModeBtn.addEventListener('click', async () => {
 document.addEventListener('DOMContentLoaded', () => {
   // Load ID mode after a short delay to ensure QB state is loaded
   setTimeout(loadIdMode, 100);
+});
+
+// ─── Migrate Existing IDs ─────────────────────────────────────────────────────
+let migrateData = [];
+
+document.getElementById('migrateToggleBtn').addEventListener('click', () => {
+  const panel = document.getElementById('migratePanel');
+  panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+});
+
+document.getElementById('migrateScanBtn').addEventListener('click', async () => {
+  const scanBtn = document.getElementById('migrateScanBtn');
+  const resultsEl = document.getElementById('migrateResults');
+  const confirmBtn = document.getElementById('migrateConfirmBtn');
+  const feedback = document.getElementById('migrateFeedback');
+
+  scanBtn.disabled = true;
+  scanBtn.textContent = 'Scanning...';
+  resultsEl.innerHTML = '';
+  confirmBtn.style.display = 'none';
+  feedback.textContent = '';
+
+  try {
+    const { licenseKey } = await chrome.storage.local.get('licenseKey');
+    const response = await fetch(`${SERVER_URL}/auth/qb/migrate-scan`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ licenseKey }),
+    });
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      feedback.className = 'migrate-feedback error';
+      feedback.textContent = data.error || 'Scan failed.';
+      return;
+    }
+
+    migrateData = data.found;
+
+    if (migrateData.length === 0) {
+      resultsEl.innerHTML = '<div class="migrate-empty">No existing IDs detected in customer fields.</div>';
+      return;
+    }
+
+    resultsEl.innerHTML = migrateData.map((item, i) => `
+      <div class="migrate-row">
+        <input type="checkbox" data-index="${i}" checked />
+        <span class="migrate-id">${item.detectedId}</span>
+        <span class="migrate-name" title="${item.name}">${item.name}</span>
+        <span class="migrate-source">${item.sourceField}</span>
+      </div>
+    `).join('');
+
+    confirmBtn.style.display = 'block';
+    confirmBtn.textContent = `Confirm Migration (${migrateData.length} customers)`;
+
+  } catch (err) {
+    feedback.className = 'migrate-feedback error';
+    feedback.textContent = 'Network error: ' + err.message;
+  } finally {
+    scanBtn.disabled = false;
+    scanBtn.textContent = 'Scan Customers';
+  }
+});
+
+document.getElementById('migrateConfirmBtn').addEventListener('click', async () => {
+  const confirmBtn = document.getElementById('migrateConfirmBtn');
+  const feedback = document.getElementById('migrateFeedback');
+  const cleanSource = document.getElementById('migrateCleanSource').checked;
+
+  // Build list of checked items
+  const checkboxes = document.querySelectorAll('#migrateResults input[type="checkbox"]');
+  const confirmed = [];
+  checkboxes.forEach((cb) => {
+    if (cb.checked) {
+      const item = migrateData[parseInt(cb.dataset.index)];
+      confirmed.push({ ...item, cleanSource });
+    }
+  });
+
+  if (confirmed.length === 0) {
+    feedback.className = 'migrate-feedback error';
+    feedback.textContent = 'No customers selected.';
+    return;
+  }
+
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = 'Migrating...';
+  feedback.textContent = '';
+
+  try {
+    const { licenseKey } = await chrome.storage.local.get('licenseKey');
+    const response = await fetch(`${SERVER_URL}/auth/qb/migrate-confirm`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ licenseKey, confirmed }),
+    });
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      feedback.className = 'migrate-feedback error';
+      feedback.textContent = data.error || 'Migration failed.';
+      return;
+    }
+
+    feedback.className = 'migrate-feedback success';
+    feedback.textContent = `✅ ${data.migrated} customers migrated${data.errors > 0 ? `, ${data.errors} errors` : ''}.`;
+    confirmBtn.style.display = 'none';
+    document.getElementById('migrateResults').innerHTML = '';
+
+    // Trigger a fresh sync to update the local customerMap
+    chrome.runtime.sendMessage({ type: 'TRIGGER_SYNC' });
+
+  } catch (err) {
+    feedback.className = 'migrate-feedback error';
+    feedback.textContent = 'Network error: ' + err.message;
+  } finally {
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = 'Confirm Migration';
+  }
 });
