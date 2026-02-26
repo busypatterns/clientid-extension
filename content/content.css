@@ -5,21 +5,21 @@
   width: fit-content;
   align-items: center;
   gap: 4px;
-  background: #f0f4ff;
-  border: 1px solid #c7d4f5;
+  background: #f0faf0;
+  border: 1px solid #2CA01C;
   border-radius: 5px;
   padding: 3px 7px;
   margin: 6px 0 0 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 11px;
   line-height: 1;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 3px rgba(44,160,28,0.12);
   z-index: 9999;
   position: relative;
 }
 
 .clientid-label {
-  color: #5c6bc0;
+  color: #1e7014;
   font-weight: 600;
   font-size: 9px;
   text-transform: uppercase;
@@ -28,7 +28,7 @@
 }
 
 .clientid-value {
-  color: #1a237e;
+  color: #1a5c10;
   font-weight: 700;
   font-size: 12px;
   font-variant-numeric: tabular-nums;
@@ -43,13 +43,13 @@
   border: none;
   cursor: pointer;
   padding: 2px;
-  color: #7986cb;
+  color: #2CA01C;
   border-radius: 3px;
   transition: color 0.15s, background 0.15s;
   line-height: 1;
 }
 
 .clientid-copy:hover {
-  color: #3949ab;
-  background: #dce2f8;
+  color: #1e7014;
+  background: #d4f0d2;
 }
