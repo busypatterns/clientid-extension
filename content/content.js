@@ -30,19 +30,16 @@ const observer = new MutationObserver(() => {
   }
 
   // If badge was removed by QB re-render, re-inject it
-  // But only if URL hasn't changed (avoid cross-page bleed)
   if (!document.getElementById(BADGE_ID) && location.href === lastUrl) {
     clearTimeout(badgeGuardTimer);
     badgeGuardTimer = setTimeout(() => {
       if (!document.getElementById(BADGE_ID) && location.href === lastUrl) {
         injectBadgeIfCustomerPage();
-        injectBadgeIfInvoicePage();
       }
     }, 500);
   }
 });
 
-// document_start means body may not exist yet — wait for it
 function startObserver() {
   if (document.body) {
     observer.observe(document.body, { childList: true, subtree: true });
@@ -53,7 +50,7 @@ function startObserver() {
   }
 }
 
-// ─── Customer Page ────────────────────────────────────────────────────────────
+// ─── Customer Page ─────────────────────────────────────────────────────────────
 function getCustomerIdFromUrl() {
   const params = new URLSearchParams(location.search);
   const nameId = params.get('nameId');
@@ -90,11 +87,9 @@ function injectBadgeIfCustomerPage() {
       return;
     }
 
-    // Look up display ID from idMap (custom mode) or use QB ID directly
     const { idMap } = await chrome.storage.local.get('idMap');
     const customerId = (idMap && idMap[qbId]) ? idMap[qbId] : qbId;
 
-    // Wait for customer name element — class differs between sandbox and production
     const nameEl =
       document.querySelector('[data-testid="stageData-name"]') ||
       document.querySelector('[class*="StageDataV2__Name-"]') ||
@@ -113,7 +108,6 @@ function injectBadgeIfCustomerPage() {
     if (attempts >= maxAttempts) {
       clearInterval(poll);
       console.log('[ClientID] Max attempts reached, using fixed fallback');
-      // Last resort — inject at top of body
       if (!document.getElementById(BADGE_ID)) {
         const fixed = document.createElement('div');
         fixed.id = BADGE_ID;
@@ -137,12 +131,19 @@ function injectBadgeIfCustomerPage() {
   }, 500);
 }
 
-// ─── Invoice Page ─────────────────────────────────────────────────────────────
+// ─── Invoice Page ──────────────────────────────────────────────────────────────
 function isInvoicePage() {
   return (
     location.pathname.includes('/invoice') ||
     location.search.includes('txnId')
   );
+}
+
+function getInvoiceInput() {
+  return document.querySelector('[data-cy="quickfill-contact"] input') ||
+         document.querySelector('[name="customer_name"]') ||
+         document.querySelector('.nameInput input') ||
+         document.querySelector('[class*="rethinkCustomerContainer"] input');
 }
 
 function injectBadgeIfInvoicePage() {
@@ -167,7 +168,7 @@ function injectBadgeIfInvoicePage() {
     }
   }
 
-  // Poll every 300ms forever — catches initial load and any customer switch
+  // Poll every 300ms — catches initial load and customer switches
   setInterval(updateInvoiceBadge, 300);
 }
 
@@ -183,9 +184,34 @@ function getCustomerIdByName(customerName) {
   });
 }
 
-// ─── Badge Injection ──────────────────────────────────────────────────────────
+// ─── Invoice Badge ─────────────────────────────────────────────────────────────
+function insertInvoiceBadge(customerId, anchor) {
+  document.getElementById('clientid-invoice-badge')?.remove();
+  const badge = document.createElement('div');
+  badge.id = 'clientid-invoice-badge';
+  badge.innerHTML = `
+    <span class="clientid-label">Customer ID</span>
+    <span class="clientid-value">${customerId}</span>
+    <button class="clientid-copy" title="Copy Customer ID">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+    </button>
+  `;
+  badge.querySelector('.clientid-copy').addEventListener('click', (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(customerId);
+  });
+  const row = anchor.closest('[data-cy="quickfill-contact"]') ||
+              anchor.closest('[class*="rethinkCustomerContainer"]') ||
+              anchor.parentElement?.parentElement ||
+              anchor.parentElement;
+  row.insertAdjacentElement('afterend', badge);
+}
+
+// ─── Customer Badge Injection ──────────────────────────────────────────────────
 function insertBadge(customerId, anchor, prepend = false) {
-  // Prevent duplicates
   removeBadge();
   const badge = document.createElement('div');
   badge.id = BADGE_ID;
@@ -210,7 +236,6 @@ function insertBadge(customerId, anchor, prepend = false) {
     });
   });
 
-  // Wrap in a centered container
   const wrapper = document.createElement('div');
   wrapper.id = 'clientid-badge-wrapper';
   wrapper.appendChild(badge);
@@ -223,11 +248,10 @@ function insertBadge(customerId, anchor, prepend = false) {
 }
 
 function removeBadge() {
-  // Remove all badges and wrappers — QB sometimes clones nodes leaving orphans
-  document.querySelectorAll(`#${BADGE_ID}, [id="${BADGE_ID}"], #clientid-badge-wrapper`).forEach(el => el.remove());
+  document.querySelectorAll(`#${BADGE_ID}, [id="${BADGE_ID}"], #clientid-badge-wrapper, #clientid-invoice-badge`).forEach(el => el.remove());
 }
 
-// Wait for DOM to be ready before injecting badge
+// ─── Bootstrap ────────────────────────────────────────────────────────────────
 async function bootstrap() {
   const { licenseStatus } = await chrome.storage.local.get('licenseStatus');
   if (!licenseStatus?.valid) {
