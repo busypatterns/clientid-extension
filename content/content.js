@@ -173,23 +173,7 @@ function injectBadgeIfInvoicePage() {
         console.log('[ClientID] No Customer ID found for:', customerName);
         return;
       }
-      // Go far enough up the DOM to be outside the input/dropdown container
-      // Try to find a row-level or section-level ancestor
-      let anchor = input.closest('[data-cy="quickfill-contact"]') ||
-                   input.closest('[class*="rethinkCustomerContainer"]') ||
-                   input.closest('[class*="customerSection"]') ||
-                   input.closest('[class*="CustomerSection"]');
-      // Walk up max 5 levels looking for a block-level container outside the input group
-      if (!anchor) {
-        anchor = input.parentElement;
-        for (let i = 0; i < 5; i++) {
-          if (anchor && anchor.parentElement && anchor.parentElement !== document.body) {
-            anchor = anchor.parentElement;
-            // Stop when we find a container wider than the input itself
-            if (anchor.offsetWidth > input.offsetWidth * 1.5) break;
-          }
-        }
-      }
+      const anchor = input.closest('div') || input.parentElement;
       insertBadge(customerId, anchor);
       return;
     }
@@ -254,7 +238,7 @@ function insertBadge(customerId, anchor, prepend = false) {
 
 function removeBadge() {
   // Remove all badges and wrappers — QB sometimes clones nodes leaving orphans
-  document.querySelectorAll(`#${BADGE_ID}, [id="${BADGE_ID}"], #clientid-badge-wrapper`).forEach(el => el.remove());
+  document.querySelectorAll(`#${BADGE_ID}, [id="${BADGE_ID}"], #clientid-badge-wrapper, #clientid-invoice-badge`).forEach(el => el.remove());
 }
 
 // Wait for DOM to be ready before injecting badge
