@@ -497,6 +497,11 @@ document.getElementById('migrateToggleBtn').addEventListener('click', () => {
   panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
 });
 
+document.getElementById('idModeToggleBtn').addEventListener('click', () => {
+  const panel = document.getElementById('idModePanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+});
+
 document.getElementById('migrateScanBtn').addEventListener('click', async () => {
   const scanBtn = document.getElementById('migrateScanBtn');
   const resultsEl = document.getElementById('migrateResults');
@@ -593,12 +598,14 @@ document.getElementById('migrateConfirmBtn').addEventListener('click', async () 
     }
 
     feedback.className = 'migrate-feedback success';
-    feedback.textContent = `✅ ${data.migrated} customers migrated${data.errors > 0 ? `, ${data.errors} errors` : ''}.`;
+    feedback.textContent = `✅ ${data.migrated} customers migrated${data.errors > 0 ? `, ${data.errors} errors` : ''}. Syncing in 4s...`;
     confirmBtn.style.display = 'none';
     document.getElementById('migrateResults').innerHTML = '';
 
-    // Trigger a fresh sync to update the local customerMap
-    chrome.runtime.sendMessage({ type: 'TRIGGER_SYNC' });
+    // Wait 4s for QB API to propagate migrated values before syncing
+    setTimeout(() => {
+      chrome.runtime.sendMessage({ type: 'TRIGGER_SYNC' });
+    }, 4000);
 
   } catch (err) {
     feedback.className = 'migrate-feedback error';
