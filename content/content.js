@@ -30,10 +30,11 @@ const observer = new MutationObserver(() => {
   }
 
   // If badge was removed by QB re-render, re-inject it
-  if (!document.getElementById(BADGE_ID)) {
+  // But only if URL hasn't changed (avoid cross-page bleed)
+  if (!document.getElementById(BADGE_ID) && location.href === lastUrl) {
     clearTimeout(badgeGuardTimer);
     badgeGuardTimer = setTimeout(() => {
-      if (!document.getElementById(BADGE_ID)) {
+      if (!document.getElementById(BADGE_ID) && location.href === lastUrl) {
         injectBadgeIfCustomerPage();
         injectBadgeIfInvoicePage();
       }
@@ -198,6 +199,8 @@ function getCustomerIdByName(customerName) {
 
 // ─── Badge Injection ──────────────────────────────────────────────────────────
 function insertBadge(customerId, anchor, prepend = false) {
+  // Prevent duplicates
+  removeBadge();
   const badge = document.createElement('div');
   badge.id = BADGE_ID;
   badge.innerHTML = `
@@ -229,8 +232,8 @@ function insertBadge(customerId, anchor, prepend = false) {
 }
 
 function removeBadge() {
-  const existing = document.getElementById(BADGE_ID);
-  if (existing) existing.remove();
+  // Remove all badges — QB sometimes clones nodes leaving orphans
+  document.querySelectorAll(`#${BADGE_ID}, [id="${BADGE_ID}"]`).forEach(el => el.remove());
 }
 
 // Wait for DOM to be ready before injecting badge
