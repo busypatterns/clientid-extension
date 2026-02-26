@@ -592,15 +592,26 @@ document.getElementById('migrateConfirmBtn').addEventListener('click', async () 
       return;
     }
 
-    feedback.className = 'migrate-feedback success';
-    feedback.textContent = `✅ ${data.migrated} customers migrated${data.errors > 0 ? `, ${data.errors} errors` : ''}. Syncing in 4s...`;
+    const migratedMsg = `✅ ${data.migrated} customers migrated${data.errors > 0 ? `, ${data.errors} errors` : ''}.`;
     confirmBtn.style.display = 'none';
     document.getElementById('migrateResults').innerHTML = '';
 
-    // Wait 4s for QB API to propagate migrated values before syncing
-    setTimeout(() => {
-      chrome.runtime.sendMessage({ type: 'TRIGGER_SYNC' });
-    }, 4000);
+    // Countdown then sync
+    let secs = 4;
+    feedback.className = 'migrate-feedback success';
+    feedback.textContent = migratedMsg + ` Syncing in ${secs}s...`;
+    const countdown = setInterval(() => {
+      secs--;
+      if (secs > 0) {
+        feedback.textContent = migratedMsg + ` Syncing in ${secs}s...`;
+      } else {
+        clearInterval(countdown);
+        feedback.textContent = migratedMsg + ` Syncing...`;
+        chrome.runtime.sendMessage({ type: 'TRIGGER_SYNC' }).then(() => {
+          feedback.textContent = migratedMsg + ` ✓ Sync done — refresh QB page to see updated badge.`;
+        });
+      }
+    }, 1000);
 
   } catch (err) {
     feedback.className = 'migrate-feedback error';
