@@ -497,11 +497,6 @@ document.getElementById('migrateToggleBtn').addEventListener('click', () => {
   panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
 });
 
-document.getElementById('idModeToggleBtn').addEventListener('click', () => {
-  const panel = document.getElementById('idModePanel');
-  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-});
-
 document.getElementById('migrateScanBtn').addEventListener('click', async () => {
   const scanBtn = document.getElementById('migrateScanBtn');
   const resultsEl = document.getElementById('migrateResults');
