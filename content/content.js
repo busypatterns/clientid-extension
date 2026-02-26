@@ -25,7 +25,7 @@ const observer = new MutationObserver(() => {
       console.log('[ClientID] URL changed, re-injecting badge for:', location.href);
       injectBadgeIfCustomerPage();
       injectBadgeIfInvoicePage();
-    }, 800);
+    }, 300);
     return;
   }
 
@@ -89,7 +89,7 @@ function injectBadgeIfCustomerPage() {
   if (!qbId) return;
 
   let attempts = 0;
-  const maxAttempts = 30;
+  const maxAttempts = 60;
 
   const poll = setInterval(async () => {
     attempts++;
@@ -140,7 +140,7 @@ function injectBadgeIfCustomerPage() {
         document.body.appendChild(fixed);
       }
     }
-  }, 500);
+  }, 300);
 }
 
 // ─── Invoice Page ──────────────────────────────────────────────────────────────
