@@ -173,7 +173,23 @@ function injectBadgeIfInvoicePage() {
         console.log('[ClientID] No Customer ID found for:', customerName);
         return;
       }
-      const anchor = input.closest('div') || input.parentElement;
+      // Go far enough up the DOM to be outside the input/dropdown container
+      // Try to find a row-level or section-level ancestor
+      let anchor = input.closest('[data-cy="quickfill-contact"]') ||
+                   input.closest('[class*="rethinkCustomerContainer"]') ||
+                   input.closest('[class*="customerSection"]') ||
+                   input.closest('[class*="CustomerSection"]');
+      // Walk up max 5 levels looking for a block-level container outside the input group
+      if (!anchor) {
+        anchor = input.parentElement;
+        for (let i = 0; i < 5; i++) {
+          if (anchor && anchor.parentElement && anchor.parentElement !== document.body) {
+            anchor = anchor.parentElement;
+            // Stop when we find a container wider than the input itself
+            if (anchor.offsetWidth > input.offsetWidth * 1.5) break;
+          }
+        }
+      }
       insertBadge(customerId, anchor);
       return;
     }
